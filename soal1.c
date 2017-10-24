@@ -44,12 +44,69 @@ void lihat()
 			default:
 				printf("No gun in this menu\n");
 		}
-		
 		int shmid = shmget(db, sizeof(int), IPC_CREAT | 0666);
 		value = shmat(shmid, NULL, 0);
-		printf("%s	:%d\n", gun[guntype], *value);
+		if(*value > 0)
+			printf("%s	:%d\n", gun[guntype-1], *value);
+		shmdt(value);
+		shmctl(shmid, IPC_RMID, NULL);
 	}
 }
+
+void tambahchoosing(char type[], int amount)
+{
+	if(strcmp(type, "MP4A1") == 0)
+		tambah(1, amount);
+	else if(strcmp(type, "PM2-V1") == 0)
+		tambah(2, amount);
+	else if(strcmp(type, "SPR-3") == 0)
+		tambah(3, amount);
+	else if(strcmp(type, "SS2-V5") == 0)
+		tambah(4, amount);
+	else if(strcmp(type, "SP1-V3") == 0)
+		tambah(5, amount);
+	else if(strcmp(type, "MINE") == 0)
+		tambah(6, amount);
+	else tambah(7, amount);
+}
+
+void tambah(int guntype, int amount)
+{
+	key_t db;
+	int *value;
+
+	switch(guntype)
+	{
+		case 1:
+			db = 1041;
+			break;
+		case 2:
+			db = 2021;
+			break;
+		case 3:
+			db = 3003;
+			break;
+		case 4:
+			db = 4025;
+			break;
+		case 5:
+			db = 5013;
+			break;
+		case 6:
+			db = 6000;
+			break;
+		default:
+			printf("No gun in this menu\n");
+	}
+	int shmid = shmget(db, sizeof(int), IPC_CREAT | 0666);
+	value = shmat(shmid, NULL, 0);
+	*value += amount;
+	shmdt(value);
+	shmctl(shmid, IPC_RMID, NULL);
+	printf("Successgully added!\n");
+	return;
+}
+
 void main()
 {
 	/*

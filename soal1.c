@@ -3,6 +3,8 @@
 #include <sys/shm.h>
 #include <unistd.h>
 
+char *gun[] = {"MP4A1", "PM2-V1", "SPR-3", "SS2-V5", "SP1-V3", "MINE"};
+
 void mainmenu()
 {
 	printf("Penjual UI\n");
@@ -13,13 +15,54 @@ void mainmenu()
 }
 
 void lihat()
-
+{
+	key_t db;
+	int *value;
+	int guntype;
+	for(guntype = 1; guntype <=6; guntype++)
+	{
+		switch(guntype)
+		{
+			case 1:
+				db = 1041;
+				break;
+			case 2:
+				db = 2021;
+				break;
+			case 3:
+				db = 3003;
+				break;
+			case 4:
+				db = 4025;
+				break;
+			case 5:
+				db = 5013;
+				break;
+			case 6:
+				db = 6000;
+				break;
+			default:
+				printf("No gun in this menu\n");
+		}
+		
+		int shmid = shmget(db, sizeof(int), IPC_CREAT | 0666);
+		value = shmat(shmid, NULL, 0);
+		printf("%s	:%d\n", gun[guntype], *value);
+	}
+}
 void main()
 {
 	/*
 	List of guns:
 	MP4A1, PM2-V1, SPR-3, SS2-V5, SPG1-V3, MINE
-	*/
+	Shared Memory keys:
+	MP4A1	 = 1041
+	PM2-V1	 = 2021
+	SPR-3	 = 3003
+	SS2-V5	 = 4025
+	SPG1-V3	 = 5013
+	MINE	 = 6000
+*/
 
         key_t key = 1234;
         int *value;

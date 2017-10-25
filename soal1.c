@@ -2,6 +2,7 @@
 #include <sys/ipc.h>
 #include <sys/shm.h>
 #include <unistd.h>
+#include <string.h>
 
 char *gun[] = {"MP4A1", "PM2-V1", "SPR-3", "SS2-V5", "SP1-V3", "MINE"};
 
@@ -107,6 +108,41 @@ void tambah(int guntype, int amount)
 	return;
 }
 
+void guninit()
+{
+	key_t db;
+	int *value;
+	for(guntype = 1; guntype <= 6; guntype++)
+	{
+		switch(guntype)
+		{
+			case 1:
+				db = 1041;
+				break;
+			case 2:
+				db = 2021;
+				break;
+			case 3:
+				db = 3003;
+				break;
+			case 4:
+				db = 4025;
+				break;
+			case 5:
+				db = 5013;
+				break;
+			case 6:
+				db = 6000;
+				break;
+			default:
+				printf("No gun in this menu\n");
+		}
+		int shmid = shmget(db, sizeof(int), IPC_CREAT | 0666);
+		value = shmat(shmid, NULL, 0);
+		*value = 0;
+	}
+}
+
 void main()
 {
 	/*
@@ -120,21 +156,27 @@ void main()
 	SPG1-V3	 = 5013
 	MINE	 = 6000
 */
-
-        key_t key = 1234;
-        int *value;
-
-        int shmid = shmget(key, sizeof(int), IPC_CREAT | 0666);
-        value = shmat(shmid, NULL, 0);
-
-        *value = 10;
-
-        printf("Program 1 : %d\n", *value);
-
-        sleep(5);
-
-        printf("Program 1: %d\n", *value);
-        shmdt(value);
-        shmctl(shmid, IPC_RMID, NULL);
+	guninit();
+	int input, banyak;
+	char senj[20];
+	while(1)
+	{
+		mainmenu();
+		scanf("%d", &input);
+		switch(input)
+		{
+			case 1:
+				lihat();
+				break;
+			case 2:
+				printf("Masukkan senjata dan jumlah yang ditambahkan:\n");
+				scanf("%s %d", senj, &banyak);
+				tambahchoosing(senj, banyak);
+				break;
+			case 3:
+				printf("See ya!\n");
+				exit(1);
+		}
+	}
 	return 0;
 }

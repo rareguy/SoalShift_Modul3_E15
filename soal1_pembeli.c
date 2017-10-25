@@ -106,8 +106,13 @@ void beli(int guntype, int amount)
 	}
 	int shmid = shmget(db, sizeof(int), IPC_CREAT | 0666);
 	value = shmat(shmid, NULL, 0);
-	*value -= amount;
-	printf("Successgully added!\n");
+	if(*value - amount < 0)
+		printf("Tidak bisa beli!\n");
+	else
+	{
+		*value -= amount;
+		printf("Successfully bought!\n");
+	}
 	return;
 }
 
@@ -211,11 +216,6 @@ void main()
 			default:
 				printf("No gun in this menu\n");
 		}
-		int *value;
-		int shmid = shmget(db, sizeof(int), IPC_CREAT | 0666);
-		value = shmat(shmid, NULL, 0);
-		shmdt(value);
-		shmctl(shmid, IPC_RMID, NULL);
 	}
 	return;
 }

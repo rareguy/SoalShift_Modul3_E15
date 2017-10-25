@@ -11,12 +11,12 @@ int nomor;
 void* baca(void *arg)
 {
 	char *word = (char *) arg;
-    while(status != 1)
-    {
-
-    }
-	char cmd[] = "cat /home/rifqi/modul3/SoalShift_Modul3_E15 | grep ";
-	strcat(,);
+	char cmd[] = "grep ";
+	strcat(cmd, word);
+	strcat(cmd, " Novel.txt | wc -l");
+	printf("%s	: ", word);
+	system(cmd);
+	printf("\n");
 }
 
 int main(int argc, void *argv[])
@@ -24,14 +24,12 @@ int main(int argc, void *argv[])
 	int i;
 	for(i = 1; argv[i] != NULL; i++)
 	{
-		pthread_create(&(tid[i]), NULL, &
+		pthread_create(&(tid[i]), NULL, &baca, argv[i]);
 	}
-    pthread_create(&(tid1), NULL, &tulis, NULL);
-    pthread_create(&(tid2), NULL, &baca, NULL);
 
-
-    pthread_join(tid1, NULL);
-    pthread_join(tid2, NULL);
-
-    return 0;
+	for(i = 1; argv[i] != NULL; i++)
+	{
+		pthread_join(tid[i], NULL);
+	}
+	return 0;
 }

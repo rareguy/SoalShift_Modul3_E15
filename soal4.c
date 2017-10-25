@@ -5,17 +5,26 @@
 #include<unistd.h>
 
 pthread_t tid[100]; ///maksimum 100 argumen
+//unsigned long long nomer[100];
 unsigned long long nomor;
+//int used;
+int status = 1;
 
 void* faktorial(void *arg)
 {
+	int a = *((int *) arg);
+	while(!status)
+	{
+	}
+	status = 0;
 	unsigned long long result = 1;
 	unsigned long long i;
-	for(i = 1; i <= nomor; i++)
+	for(i = 1; i <= a; i++)
 	{
 		result *= i;
 	}
-	printf("Hasil %llu!	:%llu\n", result);
+	printf("Hasil %llu!	:%llu\n", a, result);
+	status = 1;
 }
 
 void check(char tmp[])
@@ -66,15 +75,18 @@ void check(char tmp[])
 int main(int argc, char *argv[])
 {
 	int i;
-	for(i = 0; argv[i] != NULL; i++)
+	for(i = 1; argv[i] != NULL; i++)
 	{
-		//printf("%d\n", argv[i]);
+//		printf("%s\n", argv[i]);
 		//nomor = argv[i];
 		check(argv[i]);
-		pthread_create(&(tid[i]), NULL, &faktorial, NULL);
+//		printf("%llu\n", nomor);
+		int *num = malloc(sizeof(*num));
+		*num = nomor;
+		pthread_create(&(tid[i]), NULL, &faktorial, num);
 	}
-
-	for(i = 0; argv[i] != NULL; i++)
+//	sleep(5);
+	for(i = 1; i < argc; i++)
 	{
 		pthread_join(tid[i], NULL);
 	}

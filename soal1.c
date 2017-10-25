@@ -3,8 +3,15 @@
 #include <sys/shm.h>
 #include <unistd.h>
 #include <string.h>
+#include <stdlib.h>
 
 char *gun[] = {"MP4A1", "PM2-V1", "SPR-3", "SS2-V5", "SP1-V3", "MINE"};
+
+void mainmenu();
+void lihat();
+void tambah(int, int);
+void tambahchoosing(char type[], int amount);
+void guninit();
 
 void mainmenu()
 {
@@ -49,8 +56,6 @@ void lihat()
 		value = shmat(shmid, NULL, 0);
 		if(*value > 0)
 			printf("%s	:%d\n", gun[guntype-1], *value);
-		shmdt(value);
-		shmctl(shmid, IPC_RMID, NULL);
 	}
 }
 
@@ -102,8 +107,6 @@ void tambah(int guntype, int amount)
 	int shmid = shmget(db, sizeof(int), IPC_CREAT | 0666);
 	value = shmat(shmid, NULL, 0);
 	*value += amount;
-	shmdt(value);
-	shmctl(shmid, IPC_RMID, NULL);
 	printf("Successgully added!\n");
 	return;
 }
@@ -112,6 +115,7 @@ void guninit()
 {
 	key_t db;
 	int *value;
+	int guntype;
 	for(guntype = 1; guntype <= 6; guntype++)
 	{
 		switch(guntype)
@@ -175,8 +179,43 @@ void main()
 				break;
 			case 3:
 				printf("See ya!\n");
-				exit(1);
+				break;
 		}
+		if(input == 3)
+			break;
 	}
-	return 0;
+	int i;
+	int db;
+	for(i = 1; i <= 6; i++)
+	{
+		switch(i)
+		{
+			case 1:
+				db = 1041;
+				break;
+			case 2:
+				db = 2021;
+				break;
+			case 3:
+				db = 3003;
+				break;
+			case 4:
+				db = 4025;
+				break;
+			case 5:
+				db = 5013;
+				break;
+			case 6:
+				db = 6000;
+				break;
+			default:
+				printf("No gun in this menu\n");
+		}
+		int *value;
+		int shmid = shmget(db, sizeof(int), IPC_CREAT | 0666);
+		value = shmat(shmid, NULL, 0);
+		shmdt(value);
+		shmctl(shmid, IPC_RMID, NULL);
+	}
+	return;
 }
